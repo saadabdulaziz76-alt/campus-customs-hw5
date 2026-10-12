@@ -388,4 +388,50 @@ smoothed over, because it is the most useful thing the run produced.
 
 ---
 
+## Problem 11 — Submit to GitHub
+
+### Prompt sent
+
+> Problem 11, title " Submit to Github", Push the code to a public github
+> repository so graders can clone it. Share with me a repo URL so I can share it
+> with the professor and TAs, and also put it in "output/github_url.txt". Do not
+> push my real .env to the github repo. Do include both database files under
+> "data/" (the original and my working copy) so graders can run my app easily.
+> The expected layout is in the attached two pics. One last thing, README should
+> explain: copy original DB tot he working copy when I need a clean run, start the
+> MCP server, start FastAPI backend, start the React board, reset the DB before a
+> full three-ticket run. I want a 100% in this HW, make me proud!
+
+*(Two screenshots of the expected file layout were attached.)*
+
+### Follow-up prompt
+
+None needed.
+
+### Notes
+
+Preparing the repository exposed two things that were broken for anyone who is
+not me.
+
+`.mcp.json` stored absolute paths into `/Users/saadaziz/…`. Made relative, and
+resolved at load time by both the backend and the smoke test. The first attempt
+at resolving used `Path.resolve()`, which follows symlinks — and a virtualenv's
+`bin/python` is a symlink to the base interpreter, so the MCP server would have
+launched outside the environment holding `fastmcp`. Joining without resolving
+fixes it, with a `sys.executable` fallback so a single shared environment also
+works.
+
+The smoke test asserted against the shop's opening position and therefore died
+with an opaque `StopIteration` on a database that had already been worked. It now
+checks `payments` first and prints the one command that fixes it.
+
+Both databases are committed as asked. The working copy ships in the state the
+graded run left it — $160.00, three tickets closed — so the database agrees with
+`resolved_tickets.json` and the Cash tab rather than contradicting them. The
+README says this explicitly and gives the copy command to start clean.
+
+Every staged file was scanned for key-shaped strings before the first commit.
+
+---
+
 <!-- Later problems get appended here as the work happens. -->

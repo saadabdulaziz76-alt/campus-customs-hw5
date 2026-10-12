@@ -669,3 +669,51 @@ The guardrails were tested by trying to break them, not by reading the code:
 blank approver, wrong amount, nonexistent account, duplicate payment, oversell
 to −1, invalid status. All refused. **Safety** and **Problem 4** have the
 transcripts.
+
+---
+
+## Problem 11 — Submitting to GitHub
+
+Repository: **https://github.com/saadabdulaziz76-alt/campus-customs-hw5**
+(also written to `output/github_url.txt`).
+
+### What is committed, and what is not
+
+| Included | Why |
+|---|---|
+| `data/campus_customs.db` and `data/campus_customs_new.db` | Both, deliberately — a grader can clone and run without building a database. The working copy ships in the state the graded run left it ($160.00, three tickets closed), so the database agrees with `resolved_tickets.json` and the Cash tab. |
+| `output/board_shots/*.png` | `resolved_board.html` references them; without the images the deliverable is broken. |
+| `AI_prompts.md` | Every prompt, with notes on what had to be built rather than worked around. |
+
+| Excluded | Why |
+|---|---|
+| `.env` | The real Portkey key. `.env.example` ships a placeholder instead. |
+| `.venv/`, `node_modules/` | 340 MB of rebuildable dependencies. |
+| `output/run_*.json` | Single-run dumps from superseded runs; `audit_trail.json` holds the complete history. |
+
+Before the first commit, every staged text file was scanned for key-shaped
+strings — `sk-`, `pk-`, `ghp_`, `github_pat_`, long base64 runs. The only
+occurrences of `PORTKEY_API_KEY` in the repository are the placeholder in
+`.env.example` and the variable name in `config.py`.
+
+### Two portability fixes the submission forced
+
+`.mcp.json` held absolute paths into `/Users/saadaziz/…`, which would have
+failed on every machine but one. It now stores paths relative to the repository
+root, and both `backend/config.py` and `mcp_server/smoke_test.py` resolve them.
+
+Resolving them turned up a real bug. The first version used `Path.resolve()`,
+which **follows symlinks** — and a virtualenv's `bin/python` is a symlink to the
+base interpreter. The MCP server would have been launched by the system Python,
+outside the environment where `fastmcp` is installed. The fix is to join without
+resolving, with a deliberate `sys.executable` fallback when the server's own
+virtualenv is absent, so a grader who installs everything into a single
+environment still works.
+
+### A failure made legible
+
+`mcp_server/smoke_test.py` asserts against the shop's *opening* position — an
+unpaid invoice 501 and unpaid rent. Run against a worked database it used to die
+with `RuntimeError: coroutine raised StopIteration`. It now checks the
+`payments` table first and prints the one command that fixes it. On a clean
+database all 20 checks across the ten tools pass.
