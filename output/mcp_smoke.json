@@ -1,0 +1,284 @@
+{
+  "problem": "4 \u2014 Add the MCP server to the vibe coder and test each tool",
+  "run_at": "2026-10-12T01:22:49+00:00",
+  "mcp_server": "campus-customs-backoffice",
+  "transport": "stdio (real MCP handshake, launched from .mcp.json)",
+  "connection_json": {
+    "command": "/Users/saadaziz/Desktop/Fall 1 Classes/AI Course/AI Foundation File/Homework/HW 5/mcp_server/.venv/bin/python",
+    "args": [
+      "/Users/saadaziz/Desktop/Fall 1 Classes/AI Course/AI Foundation File/Homework/HW 5/mcp_server/server.py"
+    ],
+    "env": {}
+  },
+  "database": "AI Foundation File/Homework/HW 5/data/campus_customs_new.db",
+  "tools": [
+    {
+      "n": 1,
+      "unlocks_ticket": 101,
+      "prompt_asked": "Ticket 101 \u2014 Tauhid Zaman wants a Bulldog tee, CC-TEE-WHITE, in size S. Do we have it, and if not when can we get it? The ticket references invoice 501.",
+      "tool_name": "check_item_availability",
+      "arguments": {
+        "sku": "CC-TEE-WHITE",
+        "size": "S",
+        "invoice_id": 501
+      },
+      "tool_output": {
+        "found": true,
+        "today": "2026-08-31",
+        "sku": "CC-TEE-WHITE",
+        "name": "Classic Bulldog Tee",
+        "size": "S",
+        "on_hand": 0,
+        "in_stock": false,
+        "location": "Aisle B",
+        "other_sizes": {
+          "L": 3,
+          "M": 5,
+          "XL": 2
+        },
+        "unit_cost": 8.0,
+        "list_price": 28.0,
+        "inbound_restock": [
+          {
+            "invoice_id": 501,
+            "vendor": "Bulldog Print Co",
+            "amount": 840.0,
+            "status": "open",
+            "due_date": "2026-08-28",
+            "days_until_due": -3,
+            "overdue": true,
+            "description": "Rush reprint CC-TEE-WHITE S",
+            "vendor_lead_days": 5,
+            "earliest_arrival_if_started_today": "2026-09-05",
+            "note": "Lead time runs from when the vendor starts. This invoice is not yet paid."
+          }
+        ]
+      },
+      "verification": [
+        {
+          "check": "on_hand matches inventory.qty",
+          "tool_returned": 0,
+          "database_says": 0,
+          "match": true
+        },
+        {
+          "check": "other_sizes matches inventory",
+          "tool_returned": {
+            "L": 3,
+            "M": 5,
+            "XL": 2
+          },
+          "database_says": {
+            "L": 3,
+            "M": 5,
+            "XL": 2
+          },
+          "match": true
+        },
+        {
+          "check": "inbound vendor matches vendors.name",
+          "tool_returned": "Bulldog Print Co",
+          "database_says": "Bulldog Print Co",
+          "match": true
+        },
+        {
+          "check": "inbound amount matches invoices.amount",
+          "tool_returned": 840.0,
+          "database_says": 840.0,
+          "match": true
+        },
+        {
+          "check": "inbound lead_days matches vendors.lead_days",
+          "tool_returned": 5,
+          "database_says": 5,
+          "match": true
+        },
+        {
+          "check": "today matches desk.date_today",
+          "tool_returned": "2026-08-31",
+          "database_says": "2026-08-31",
+          "match": true
+        }
+      ],
+      "all_match": true
+    },
+    {
+      "n": 2,
+      "unlocks_ticket": 102,
+      "prompt_asked": "Ticket 102 \u2014 Elm City Properties says rent is due in two days. What do we owe in total right now, and does our cash cover it?",
+      "tool_name": "review_cash_and_obligations",
+      "arguments": {},
+      "tool_output": {
+        "today": "2026-08-31",
+        "accounts": [
+          {
+            "name": "checking",
+            "balance": 3400.0,
+            "date": "2026-08-31"
+          }
+        ],
+        "total_cash": 3400.0,
+        "obligations": [
+          {
+            "kind": "invoice",
+            "ref_id": 501,
+            "payee": "Bulldog Print Co",
+            "amount": 840.0,
+            "due_date": "2026-08-28",
+            "days_until_due": -3,
+            "overdue": true,
+            "status": "open",
+            "description": "Rush reprint CC-TEE-WHITE S"
+          },
+          {
+            "kind": "rent",
+            "ref_id": 1,
+            "payee": "Elm City Properties",
+            "amount": 2400.0,
+            "due_date": "2026-09-02",
+            "days_until_due": 2,
+            "overdue": false,
+            "status": "unpaid",
+            "description": "Rent for Chapel Street shop"
+          }
+        ],
+        "total_owed": 3240.0,
+        "remaining_if_all_paid": 160.0,
+        "covers_everything": true,
+        "payments_already_made": [],
+        "note": "Nothing here has been paid. Writing a payment is a separate, irreversible action that records who approved it."
+      },
+      "verification": [
+        {
+          "check": "total_cash matches cash_accounts.balance",
+          "tool_returned": 3400.0,
+          "database_says": 3400.0,
+          "match": true
+        },
+        {
+          "check": "total_owed = invoice + rent",
+          "tool_returned": 3240.0,
+          "database_says": 3240.0,
+          "match": true
+        },
+        {
+          "check": "remaining = cash - owed",
+          "tool_returned": 160.0,
+          "database_says": 160.0,
+          "match": true
+        },
+        {
+          "check": "obligation count",
+          "tool_returned": 2,
+          "database_says": 2,
+          "match": true
+        },
+        {
+          "check": "rent amount matches leases.monthly_rent",
+          "tool_returned": 2400.0,
+          "database_says": 2400.0,
+          "match": true
+        },
+        {
+          "check": "invoice is flagged overdue (due 2026-08-28 vs today 2026-08-31)",
+          "tool_returned": true,
+          "database_says": true,
+          "match": true
+        },
+        {
+          "check": "payments table still empty",
+          "tool_returned": [],
+          "database_says": [],
+          "match": true
+        }
+      ],
+      "all_match": true
+    },
+    {
+      "n": 3,
+      "unlocks_ticket": 103,
+      "prompt_asked": "Ticket 103 \u2014 the Yale AI Club wants 20 navy hoodies in size M and is asking for a bulk discount. Can we fill it, and what does $40 a unit do to our margin?",
+      "tool_name": "price_bulk_order",
+      "arguments": {
+        "sku": "CC-HOOD-NAVY",
+        "size": "M",
+        "qty": 20,
+        "proposed_unit_price": 40.0
+      },
+      "tool_output": {
+        "found": true,
+        "sku": "CC-HOOD-NAVY",
+        "name": "Basic Hoodie Big Yale",
+        "size": "M",
+        "qty_requested": 20,
+        "qty_on_hand": 8,
+        "qty_fillable_now": 8,
+        "shortfall": 12,
+        "can_fill_in_full": false,
+        "unit_cost": 22.0,
+        "list_price": 58.0,
+        "quoted_unit_price": 40.0,
+        "discount_vs_list_pct": 31.03,
+        "margin_per_unit": 18.0,
+        "margin_pct": 45.0,
+        "below_cost": false,
+        "revenue_if_filled_now": 320.0,
+        "margin_if_filled_now": 144.0,
+        "floor_note": "unit_cost is 22.0; any price at or below this loses money on every unit."
+      },
+      "verification": [
+        {
+          "check": "qty_on_hand matches inventory.qty",
+          "tool_returned": 8,
+          "database_says": 8,
+          "match": true
+        },
+        {
+          "check": "shortfall = 20 - on_hand",
+          "tool_returned": 12,
+          "database_says": 12,
+          "match": true
+        },
+        {
+          "check": "unit_cost matches pricing.unit_cost",
+          "tool_returned": 22.0,
+          "database_says": 22.0,
+          "match": true
+        },
+        {
+          "check": "list_price matches pricing.list_price",
+          "tool_returned": 58.0,
+          "database_says": 58.0,
+          "match": true
+        },
+        {
+          "check": "margin_per_unit = quote - cost",
+          "tool_returned": 18.0,
+          "database_says": 18.0,
+          "match": true
+        },
+        {
+          "check": "below_cost false at $40 (cost is 22)",
+          "tool_returned": false,
+          "database_says": false,
+          "match": true
+        }
+      ],
+      "all_match": true
+    }
+  ],
+  "tools_discovered": [
+    "check_item_availability",
+    "review_cash_and_obligations",
+    "price_bulk_order",
+    "list_open_tickets",
+    "get_ticket",
+    "list_vendors",
+    "get_lease",
+    "record_payment",
+    "adjust_inventory",
+    "close_ticket"
+  ],
+  "all_checks_passed": true,
+  "summary": "3 tools called over a real MCP stdio connection; 19 values cross-checked against campus_customs_new.db; all matched."
+}

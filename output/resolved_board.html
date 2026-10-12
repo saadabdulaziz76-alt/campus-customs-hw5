@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Campus Customs — The Desk: all three tickets resolved</title>
+<style>
+  :root{
+    --ink:#0b0c0e; --panel:#121417; --panel-2:#171a1e; --line:#24282e;
+    --text:#e8e6e1; --dim:#9aa0a8; --faint:#6e757d;
+    --brass:#c9a227; --sage:#7a9e7e; --slate:#6d8bb0; --clay:#c08457; --lilac:#9b8bb4;
+    --good:#7a9e7e; --warn:#c9a227;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--ink);color:var(--text);
+       font:15px/1.65 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  header{padding:38px 32px 26px;border-bottom:1px solid var(--line);
+         background:linear-gradient(180deg,#141619,#0b0c0e)}
+  .kicker{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--brass);margin:0 0 10px}
+  header h1{margin:0 0 8px;font-size:27px;font-weight:600;letter-spacing:-.015em}
+  header p{margin:0;color:var(--dim);font-size:14px;max-width:70ch}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 28px 80px}
+  .strip{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 0}
+  .stat{flex:1 1 170px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .stat b{display:block;font-size:21px;font-weight:600;letter-spacing:-.01em}
+  .stat span{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+  .stat.money b{color:var(--brass)}
+  nav.jump{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 0}
+  nav.jump a{color:var(--dim);text-decoration:none;font-size:13px;font-weight:600;
+             border:1px solid var(--line);border-radius:999px;padding:7px 15px;background:var(--panel)}
+  nav.jump a:hover{color:var(--text);border-color:#38404a}
+  section.shot{margin:44px 0 0;scroll-margin-top:18px}
+  .head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:0 0 4px}
+  .num{font:600 12px/1 ui-monospace,Menlo,monospace;color:var(--faint);letter-spacing:.08em}
+  .head h2{margin:0;font-size:20px;font-weight:600;letter-spacing:-.01em}
+  .chip{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+        padding:4px 11px;border-radius:999px;border:1px solid}
+  .chip.done{color:var(--good);border-color:#2f4436;background:#17241b}
+  .chip.nil{color:var(--dim);border-color:var(--line);background:var(--panel)}
+  .chip.cost{color:var(--brass);border-color:#4a3d16;background:#241f10}
+  .lede{margin:0 0 16px;color:var(--dim);font-size:14px;max-width:88ch}
+  /* Figures break out of the 1180px text column so the board renders at the
+     1440px width it was captured at — at 2x that is pixel-exact, and readable. */
+  figure{margin:0;background:var(--panel);border:1px solid var(--line);border-radius:14px;
+         padding:12px;
+         width:min(1468px, calc(100vw - 40px));
+         margin-left:calc((100% - min(1468px, calc(100vw - 40px))) / 2)}
+  figure a{display:block;position:relative;border-radius:8px;overflow:hidden;cursor:zoom-in}
+  figure img{display:block;width:100%;max-width:1440px;height:auto;margin:0 auto;
+             border-radius:8px;border:1px solid #1d2126}
+  figure a::after{content:"Click to enlarge";position:absolute;right:12px;bottom:12px;
+                  background:rgba(8,9,11,.82);border:1px solid var(--line);color:var(--dim);
+                  font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+                  padding:6px 11px;border-radius:999px;opacity:0;transition:opacity .18s}
+  figure a:hover::after{opacity:1}
+  figure a:hover img{border-color:#3a434e}
+  figcaption{color:var(--faint);font-size:12px;padding:11px 4px 2px;text-align:center}
+  /* full-size viewer */
+  #zoom{position:fixed;inset:0;z-index:99;background:rgba(6,7,9,.96);display:none;
+        overflow:auto;padding:28px;cursor:zoom-out}
+  #zoom.on{display:block}
+  #zoom img{display:block;margin:0 auto;width:1440px;max-width:none;border-radius:10px;
+            border:1px solid var(--line)}
+  #zoom .hint{position:fixed;top:16px;right:20px;color:var(--dim);font-size:12px;
+              letter-spacing:.08em;text-transform:uppercase;background:rgba(18,20,23,.9);
+              border:1px solid var(--line);border-radius:999px;padding:7px 14px}
+  .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin:16px 0 0}
+  .fact{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .fact span{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+  .fact p{margin:0;font-size:13.5px;line-height:1.55}
+  .who{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 0}
+  .mate{display:flex;align-items:center;gap:9px;background:var(--panel-2);border:1px solid var(--line);
+        border-radius:999px;padding:5px 14px 5px 5px;font-size:12.5px}
+  .mate i{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-style:normal;
+          font-weight:700;font-size:11px;color:#0b0c0e;background:var(--a)}
+  .mate.out{opacity:.42}
+  .mate.out i{background:transparent;border:1px solid var(--line);color:var(--faint)}
+  table{width:100%;border-collapse:collapse;margin:20px 0 0;font-size:13.5px}
+  th{text-align:left;font-weight:600;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;
+     color:var(--faint);padding:0 12px 9px;border-bottom:1px solid var(--line)}
+  td{padding:11px 12px;border-bottom:1px solid #1a1d21;vertical-align:top}
+  tr:last-child td{border-bottom:0}
+  td.amt{font:600 14px/1 ui-monospace,Menlo,monospace;white-space:nowrap}
+  .down{color:#c76b63} .flat{color:var(--good)}
+  tfoot td{border-top:1px solid var(--line);font-weight:600;padding-top:13px}
+  code{background:#1b1e23;border:1px solid var(--line);border-radius:4px;padding:1px 6px;
+       font:12px ui-monospace,Menlo,monospace;color:#cbd3dc}
+  .ledger{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:20px 0 0}
+  .ledger h2{margin:0 0 4px;font-size:19px;font-weight:600}
+  .proof{margin:16px 0 0;background:#11180f;border:1px solid #28351f;border-radius:10px;padding:13px 16px;
+         font-size:13px;color:#b9c9ad}
+  .proof b{color:var(--good)}
+  footer{border-top:1px solid var(--line);margin-top:56px;padding:22px 0 0;color:var(--faint);font-size:12.5px}
+  @media (max-width:640px){ .wrap{padding:0 16px 56px} header{padding:28px 18px 20px} }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap" style="padding-bottom:0">
+    <p class="kicker">Campus Customs · Chapel Street · shop date 2026-08-31</p>
+    <h1>The Desk — all three tickets resolved</h1>
+    <p>A record of one full run of the agent team over tickets 101, 102 and 103, captured from the
+    live React board. The working database was reset to the pristine copy immediately before the
+    run, so every figure here starts from a clean $3,400.00.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="strip">
+    <div class="stat money"><b>$3,400.00</b><span>starting checking</span></div>
+    <div class="stat money"><b>$160.00</b><span>ending checking</span></div>
+    <div class="stat"><b>3 / 3</b><span>tickets resolved</span></div>
+    <div class="stat"><b>2</b><span>payments, both human-approved</span></div>
+    <div class="stat"><b>0</b><span>payments made by an agent</span></div>
+  </div>
+
+  <nav class="jump">
+    <a href="#all">The board</a>
+    <a href="#t101">#101 Bulldog tee</a>
+    <a href="#t102">#102 Rent due</a>
+    <a href="#t103">#103 Bulk hoodies</a>
+    <a href="#cash">The money</a>
+  </nav>
+
+  <p style="margin:18px 0 0;color:var(--faint);font-size:12.5px">Every screenshot below is a live capture of the React board at 2× — click one to open it full size.</p>
+
+  <!-- ===================== whole board ===================== -->
+  <section class="shot" id="all">
+    <div class="head">
+      <span class="num">THE BOARD</span>
+      <h2>Queue clear</h2>
+      <span class="chip done">3 resolved</span>
+    </div>
+    <p class="lede">All three tickets closed, $160.00 in checking, nothing still owed, and the
+    whole team back at the desk.</p>
+    <figure>
+      <a href="board_shots/board_all_resolved.png" target="_blank" rel="noopener">
+        <img src="board_shots/board_all_resolved.png" alt="The Campus Customs desk board with tickets 101, 102 and 103 all marked resolved and checking at $160.00" />
+      </a>
+      <figcaption>The React board after the run · <code>http://localhost:5173/</code></figcaption>
+    </figure>
+  </section>
+
+  <!-- ===================== 101 ===================== -->
+  <section class="shot" id="t101">
+    <div class="head">
+      <span class="num">#101</span>
+      <h2>Bulldog tee, size S</h2>
+      <span class="chip done">resolved</span>
+      <span class="chip cost">−$840.00</span>
+    </div>
+    <p class="lede">A customer wants one <code>CC-TEE-WHITE</code> in S. There are none. The reprint
+    that would fix it sits behind invoice 501, three days overdue — so the real answer was a date,
+    and the date was locked behind an unpaid bill.</p>
+
+    <figure>
+      <a href="board_shots/ticket_101.png" target="_blank" rel="noopener">
+        <img src="board_shots/ticket_101.png" alt="The board showing ticket 101 selected and resolved, with Morgan and Theo active and the team's decision written out" />
+      </a>
+      <figcaption>Run <code>ee15b0fe0c60</code> · 5 model calls · 17,825 in / 1,315 out tokens · 2.54s</figcaption>
+    </figure>
+
+    <div class="who">
+      <span class="mate" style="--a:var(--brass)"><i>M</i> Morgan · Shop Manager</span>
+      <span class="mate" style="--a:var(--lilac)"><i>T</i> Theo · Customer Service</span>
+      <span class="mate out"><i>P</i> Priya · never called</span>
+      <span class="mate out"><i>D</i> Dan · never called</span>
+      <span class="mate out"><i>R</i> Rosa · never called</span>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><span>What the team did</span><p>Morgan read the ticket, then checked stock
+      and the books themselves. Size S at 0, invoice 501 unpaid, $3,400 against $3,240 owed. They handed
+      only the customer reply to Theo and closed the ticket as blocked.</p></div>
+      <div class="fact"><span>Delegations — one</span><p>Boss → Customer Service. The decision text
+      claimed three consults; the audit trail records one. The trail is the truth.</p></div>
+      <div class="fact"><span>MCP tools</span><p><code>get_ticket</code> ·
+      <code>check_item_availability</code> · <code>review_cash_and_obligations</code> ·
+      <code>close_ticket</code></p></div>
+      <div class="fact"><span>Human approval</span><p><b>Saad Alarifi</b> approved invoice 501 for
+      $840.00 — approval <code>9549bf5058</code>, payment id 1. The agents prepared it; they could
+      not make it.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== 102 ===================== -->
+  <section class="shot" id="t102">
+    <div class="head">
+      <span class="num">#102</span>
+      <h2>Rent due — Elm City Properties</h2>
+      <span class="chip done">resolved</span>
+      <span class="chip cost">−$2,400.00</span>
+    </div>
+    <p class="lede">An email from the landlord. Lease 1, $2,400, due 2026-09-02 — two days out. Not
+    overdue, but after invoice 501 there was only $2,560 left to pay it with.</p>
+
+    <figure>
+      <a href="board_shots/ticket_102.png" target="_blank" rel="noopener">
+        <img src="board_shots/ticket_102.png" alt="The board showing ticket 102 selected and resolved, with Morgan, Rosa, Dan and Theo all active" />
+      </a>
+      <figcaption>Run <code>6482d6f0dfd9</code> · 5 model calls · 17,398 in / 764 out tokens · 22.91s</figcaption>
+    </figure>
+
+    <div class="who">
+      <span class="mate" style="--a:var(--brass)"><i>M</i> Morgan · Shop Manager</span>
+      <span class="mate" style="--a:var(--clay)"><i>R</i> Rosa · Facilities</span>
+      <span class="mate" style="--a:var(--slate)"><i>D</i> Dan · Bookkeeper</span>
+      <span class="mate" style="--a:var(--lilac)"><i>T</i> Theo · Customer Service</span>
+      <span class="mate out"><i>P</i> Priya · never called</span>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><span>What the team did</span><p>Morgan asked Rosa and Dan in the same turn,
+      so they worked in parallel. Rosa pulled the lease and confirmed $2,400 due 2026-09-02, not
+      overdue. Dan checked cash against <em>all</em> obligations, not just this bill.</p></div>
+      <div class="fact"><span>Delegations — three</span><p>Boss → Facilities and Boss → Accounting
+      together, then Boss → Customer Service. Theo was not in the plan for this ticket.</p></div>
+      <div class="fact"><span>MCP tools</span><p><code>get_ticket</code> · <code>get_lease</code> ·
+      <code>review_cash_and_obligations</code> (three agents, separately) ·
+      <code>list_open_tickets</code> · <code>close_ticket</code></p></div>
+      <div class="fact"><span>Human approval</span><p><b>Saad Alarifi</b> approved rent on lease 1
+      for $2,400.00 — approval <code>f1b13ac189</code>, payment id 2. Paid two days early.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== 103 ===================== -->
+  <section class="shot" id="t103">
+    <div class="head">
+      <span class="num">#103</span>
+      <h2>Bulk hoodie discount — Yale AI Club</h2>
+      <span class="chip done">resolved</span>
+      <span class="chip nil">no money moved</span>
+    </div>
+    <p class="lede">Twenty <code>CC-HOOD-NAVY</code> in M, at a discount. There are eight. And by the
+    time this ticket came up there was $160 in the account — which is the whole point of the board:
+    the discount is asked for at the exact moment it cannot be given.</p>
+
+    <figure>
+      <a href="board_shots/ticket_103.png" target="_blank" rel="noopener">
+        <img src="board_shots/ticket_103.png" alt="The board showing ticket 103 selected and resolved, with Morgan, Priya and Theo active and Dan and Rosa dimmed" />
+      </a>
+      <figcaption>Run <code>15e4be3f384e</code> · 6 model calls · 21,868 in / 2,050 out tokens · 3.02s</figcaption>
+    </figure>
+
+    <div class="who">
+      <span class="mate" style="--a:var(--brass)"><i>M</i> Morgan · Shop Manager</span>
+      <span class="mate" style="--a:var(--sage)"><i>P</i> Priya · Inventory Lead</span>
+      <span class="mate" style="--a:var(--lilac)"><i>T</i> Theo · Customer Service</span>
+      <span class="mate out"><i>D</i> Dan · never called</span>
+      <span class="mate out"><i>R</i> Rosa · never called</span>
+    </div>
+
+    <div class="facts">
+      <div class="fact"><span>What the team did</span><p>Morgan priced the order themselves, so they knew
+      the shortfall was 12 before asking anyone. Priya confirmed no reprint is ordered or inbound —
+      so the 5-day vendor lead gives no date worth quoting. Theo wrote the offer.</p></div>
+      <div class="fact"><span>Delegations — two</span><p>Boss → Inventory, Boss → Customer Service.
+      Dan was never called because no below-list price was ever proposed — there was no margin to
+      check. That is the plan working, not a gap.</p></div>
+      <div class="fact"><span>MCP tools</span><p><code>get_ticket</code> ·
+      <code>price_bulk_order</code> · <code>check_item_availability</code> ·
+      <code>list_vendors</code> · <code>list_open_tickets</code> · <code>close_ticket</code>.
+      No cash tool was touched.</p></div>
+      <div class="fact"><span>Human decision</span><p><b>Saad Alarifi</b> declined the discount and
+      accepted the offer of 8 at $58 via <code>POST /api/tickets/103/resolve</code>. No payment, no
+      reprint, no promised date.</p></div>
+    </div>
+  </section>
+
+  <!-- ===================== cash ===================== -->
+  <section class="shot" id="cash">
+    <div class="ledger">
+      <h2>The money, start to finish</h2>
+      <p class="lede" style="margin-bottom:0">Read back from <code>data/campus_customs_new.db</code>
+      after the run — not asserted here.</p>
+
+      <table>
+        <thead>
+          <tr><th>Ticket</th><th>Before</th><th>Change</th><th>Why</th><th>After</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>—</td><td class="amt">—</td><td class="amt">—</td>
+            <td><strong>Starting balance after the reset.</strong> $3,240.00 owed against it:
+            invoice 501 at $840 and rent at $2,400.</td>
+            <td class="amt">$3,400.00</td>
+          </tr>
+          <tr>
+            <td><strong>#101</strong></td><td class="amt">$3,400.00</td>
+            <td class="amt down">−$840.00</td>
+            <td>Invoice 501 paid in full to Bulldog Print Co — the rush reprint of
+            <code>CC-TEE-WHITE</code> S, three days overdue. Approved by Saad Alarifi.</td>
+            <td class="amt">$2,560.00</td>
+          </tr>
+          <tr>
+            <td><strong>#102</strong></td><td class="amt">$2,560.00</td>
+            <td class="amt down">−$2,400.00</td>
+            <td>September rent on lease 1 to Elm City Properties, paid two days before the
+            2026-09-02 due date. Approved by Saad Alarifi.</td>
+            <td class="amt">$160.00</td>
+          </tr>
+          <tr>
+            <td><strong>#103</strong></td><td class="amt">$160.00</td>
+            <td class="amt flat">$0.00</td>
+            <td>No payment. The discount was declined and no reprint was ordered, so nothing was
+            spent — resolved by a human decision, not a transaction.</td>
+            <td class="amt">$160.00</td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td>Ending</td><td class="amt">—</td><td class="amt down">−$3,240.00</td>
+            <td>Two payments, both signed by a person.</td>
+            <td class="amt" style="color:var(--brass)">$160.00</td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <div class="proof">
+        <b>Checked five ways and all five agree.</b>
+        Arithmetic <code>3,400.00 − 840.00 − 2,400.00 = 160.00</code> ·
+        <code>SELECT balance FROM cash_accounts WHERE name='checking'</code> → <b>160.0</b> ·
+        <code>SELECT SUM(amount) FROM payments</code> → <b>3240.0</b> ·
+        <code>GET /api/cash</code> → <b>$160.00</b>, $0.00 still owed ·
+        the board header reads <b>$160.00</b>.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Campus Customs back office · five agents on <code>gpt-6-luna</code> through Portkey · tools served
+    over MCP · full event history in <code>output/audit_trail.json</code>, structured results in
+    <code>output/resolved_tickets.json</code>, plan-versus-actual in <code>output/desk_tickets.html</code>.
+    Every dollar that moved carries a human name.
+  </footer>
+
+</div>
+<div id="zoom" aria-hidden="true"><span class="hint">Click anywhere, or press Esc, to close</span><img alt="" /></div>
+<script>
+  // Click a board shot to see it at full size. Falls back to the plain link
+  // (target="_blank") if scripting is off, so the page still works either way.
+  (function () {
+    var z = document.getElementById('zoom'), zi = z.querySelector('img');
+    document.querySelectorAll('figure a').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        zi.src = a.getAttribute('href');
+        zi.alt = a.querySelector('img').alt;
+        z.classList.add('on'); z.scrollTop = 0;
+        document.body.style.overflow = 'hidden';
+      });
+    });
+    function close() { z.classList.remove('on'); document.body.style.overflow = ''; }
+    z.addEventListener('click', close);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+# ---- secrets -------------------------------------------------------------
+# The real key never goes near this repository. Use .env.example as a template.
+.env
+.env.*
+!.env.example
+
+# ---- python --------------------------------------------------------------
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# ---- node ----------------------------------------------------------------
+node_modules/
+dist/
+*.tsbuildinfo
+
+# ---- macOS ---------------------------------------------------------------
+.DS_Store
+
+# ---- scratch -------------------------------------------------------------
+.gitkeep
+joke.txt
+# Single-run dumps from earlier, superseded runs. The complete, append-only
+# history of every run is committed as output/audit_trail.json.
+output/run_*.json
+
+# ---- deliberately NOT ignored --------------------------------------------
+# data/campus_customs.db      - the pristine database
+# data/campus_customs_new.db  - the working copy, as left by the graded run
+# Both are committed on purpose so a grader can clone and run immediately.

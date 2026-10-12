@@ -1,0 +1,18 @@
+# Campus Customs — everything the backend and the MCP server need.
+#   python3 -m venv .venv && source .venv/bin/activate
+#   pip install -r requirements.txt
+#
+# The agent framework. OpenAIResponsesModel is required: gpt-6-luna rejects
+# function tools on /v1/chat/completions, so the Responses API is not optional.
+pydantic-ai-slim[openai,mcp]>=2.0.0
+openai>=1.40.0
+
+# The MCP server, and the client the agents use to reach it.
+fastmcp>=4.0.0
+
+# The API the React board talks to.
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+
+# Reads PORTKEY_API_KEY out of .env.
+python-dotenv>=1.0.1
